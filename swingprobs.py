@@ -6,7 +6,7 @@ from numpy.linalg import lstsq,det,norm,eigvalsh,eigvals
 from scipy.optimize import fmin_slsqp
 from math import log,exp,pi,sqrt
 from random import normalvariate
-opmode=3;o1pow=2;lam=3.
+opmode=3;o1pow=2;lam=2.0
 colconstr=True
 rap=True
 
@@ -17,12 +17,13 @@ countries=['E']
 #parties=['Labour','Conservative','Liberal Democrat','Other','NoVote']
 #parties=['Labour','Conservative','Liberal Democrat','UKIP','Other','NoVote']
 #parties=['Labour','Conservative','Liberal Democrat','UKIP','Green','Other','NoVote']
-parties=['Labour','Conservative','Liberal Democrat','UKIP','Green','NoVote']
+#parties=['Labour','Conservative','Liberal Democrat','UKIP','Green','NoVote']
+parties=['Conservative','Labour','Liberal Democrat','UKIP','Green','NoVote']
 #parties=['Labour','Conservative','Liberal Democrat','UKIP','Scottish Green','SNP','Other','NoVote'];countries=['S']
 #parties=['Labour','Conservative','Liberal Democrat','UKIP','Scottish Green','SNP','NoVote'];countries=['S']
-#parties=['Labour','Conservative','Liberal Democrat','SNP','Other','NoVote'];countries=['S']
+#parties=['Labour','SNP','Liberal Democrat','Conservative','Other','NoVote'];countries=['S']
 #parties=['Labour','Conservative','Liberal Democrat','Green','Plaid Cymru','UKIP','Other','NoVote'];countries=['W']
-#parties=['Labour','Conservative','Liberal Democrat','SNP','NoVote'];countries=['S']
+#parties=['SNP','Labour','Liberal Democrat','Conservative','NoVote'];countries=['S']
 # There is a hard-coded assumption that "NoVote" is on the list of parties
 # (and that there are no real parties called "Other" or "NoVote").
 assert 'NoVote' in parties
@@ -290,7 +291,7 @@ if 0:# Some starting point
   ])
   params=encodeparams(prob)
 
-if 1:
+if 1 and 'E' in countries:
   prob=array([
     [0.956,  0.006,  0.001,  0.032,  0.001,  0.004],
     [0.020,  0.955,  0.002,  0.016,  0.001,  0.006],
@@ -301,13 +302,13 @@ if 1:
   ])
   params=encodeparams(prob)
 
-if 0:
+if 1 and 'S' in countries:
   prob=array([
-    [0.659,  0.000,  0.011,  0.330,  0.000],
-    [0.010,  0.935,  0.036,  0.020,  0.000],
-    [0.037,  0.085,  0.227,  0.651,  0.000],
-    [0.000,  0.035,  0.000,  0.965,  0.000],
-    [0.000,  0.000,  0.001,  0.262,  0.737]
+    [0.968,  0.001,  0.001,  0.029,  0.001],
+    [0.321,  0.660,  0.017,  0.001,  0.001],
+    [0.483,  0.040,  0.384,  0.092,  0.001],
+    [0.021,  0.009,  0.057,  0.912,  0.001],
+    [0.269,  0.001,  0.001,  0.001,  0.728]
   ])
   params=encodeparams(prob)
 
@@ -316,13 +317,14 @@ def fmin(np,ar): return fmin_slsqp(np,ar,iter=1000000,epsilon=1e-4,f_eqcons=lamb
 # fprime_eqcons=lambda x:array([[int(j>=i*n and j<(i+1)*n) for j in range(N)] for i in range(n)]),
 
 best=fmin(negprob,params)
-print best
 resid.sort()
 for (v,c) in resid: print "%12g"%v,c
+prob=decodeparams(best)
 print;prtot(tot)
 print;prprob(prob)
 print;prflow(prob,tot)
-ns=100000;trob=op3average(ns,prob)
-print;print ns,"sample"+"s"*(ns!=1),"averaged swings";prprob(trob)
-print;prflow(trob,tot)
+if opmode==3:
+  ns=1000000;trob=op3average(ns,prob)
+  print;print ns,"sample"+"s"*(ns!=1),"averaged swings";prprob(trob)
+  print;prflow(trob,tot)
 print "Done"
